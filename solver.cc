@@ -30,18 +30,16 @@ void suggest_words(std::vector<wordset> &words) {
   }
   std::sort(words.begin(), words.end());
 
-  std::cout << "Suggested words:\n";
   if (words.empty()) {
-    std::cout << "No words remaining. Please check your inputs. Terminating.";
-    exit(0);
-  }
+		std::cout << "No words remaining. Please check the inputs. Terminating.\n";
+		exit(0);
+	}
+
+  std::cout << "Suggested words:\n";
   for (int i = 0; i < std::min(SUGGESTCOUNT, (int)words.size()); i++) {
     std::cout << words[i].getData() << " " << words[i].getWeightage().second << '\n';
   }
-  if (words.size() < SUGGESTCOUNT) {
-    std::cout << "(these are the only remaining words)\n";
-  }
-  std::cout << '\n';
+  std::cout << "(total remaining words: " << words.size() << ")\n\n";
 }
 
 bool capture_response(std::vector<wordset> &words) {
