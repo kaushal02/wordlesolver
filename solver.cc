@@ -1,83 +1,25 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <vector>
-using namespace std;
+#include "include/config.h"
+#include "include/utility.h"
+#include "include/wordset.h"
 
-const string FILENAME = "/Users/cartmanbrah/Desktop/Codes/local/data/fiveletterwords.txt";
-const int SUGGESTCOUNT = 5;
-const int WORDLENGTH = 5;
-
-class wordset {
-private:
-  string data;
-  int weight;
-  int variety;
-  vector<int> count;
-
-public:
-  wordset(string word) {
-    assert(word.size() == WORDLENGTH);
-    data = word;
-    weight = 0;
-    count.resize(26, 0);
-    for (char c : data) {
-      count[c - 'a']++;
-    }
-    variety = 0;
-    for (int c : count) {
-      if (c > 0) {
-        variety++;
-      }
-    }
-  }
-  string getData() {
-    return data;
-  }
-  pair<int,int> getWeightage() const {
-    return make_pair(variety, weight);
-  }
-  void setWeight(vector<int> &charweights) {
-    weight = 0;
-    for (char c : data) {
-      int ch = (c - 'a');
-      weight += count[ch] * charweights[ch];
-    }
-  }
-  bool operator < (wordset const &word) const {
-    return getWeightage() > word.getWeightage();
-  }
-  bool isValid(string &checkword, string &verdict) {
-    for (int i = 0; i < WORDLENGTH; i++) {
-      if ((verdict[i] == '0') ^ (!count[checkword[i] - 'a'])) {
-        return false;
-      }
-      if (verdict[i] == '1' and data[i] == checkword[i]) {
-        return false;
-      }
-      if (verdict[i] == '2' and data[i] != checkword[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-};
-vector<wordset> words;
-
-void read_from_file(string filename) {
-  ifstream fin(filename);
+void read_from_file(std::vector<wordset> &words) {
+  std::ifstream fin(FILENAME);
   if (!fin.is_open()) {
-    cout << "Unable to open file";
+    std::cout << "Unable to open file";
     exit(1);
   }
-  string word;
+  std::string word;
   while (fin >> word) {
     words.push_back(wordset(word));
   }
   fin.close();
 }
 
-void suggest_words() {
-  vector<int> count(26, 0);
+void suggest_words(std::vector<wordset> &words) {
+  std::vector<int> count(26, 0);
   for (wordset &w : words) {
     for (char c : w.getData()) {
       count[c - 'a']++;
@@ -86,25 +28,41 @@ void suggest_words() {
   for (wordset &w : words) {
     w.setWeight(count);
   }
-  sort(words.begin(), words.end());
-  cout << "Suggested words:\n";
-  for (int i = 0; i < min(SUGGESTCOUNT, (int)words.size()); i++) {
-    cout << words[i].getData() << " " << words[i].getWeightage().second << '\n';
+  std::sort(words.begin(), words.end());
+
+  std::cout << "Suggested words:\n";
+  if (words.empty()) {
+    std::cout << "No words remaining. Please check your inputs. Terminating.";
+    exit(0);
   }
+  for (int i = 0; i < std::min(SUGGESTCOUNT, (int)words.size()); i++) {
+    std::cout << words[i].getData() << " " << words[i].getWeightage().second << '\n';
+  }
+  if (words.size() < SUGGESTCOUNT) {
+    std::cout << "(these are the only remaining words)\n";
+  }
+  std::cout << '\n';
 }
 
-bool capture_response() {
-  cout << "Please enter the word: ";
-  string checkword; cin >> checkword;
-  cout << "Please enter the verdict: ";
-  string verdict; cin >> verdict;
+bool capture_response(std::vector<wordset> &words) {
+  std::string checkword;
+  do {
+    std::cout << "Please enter the word: ";
+    std::cin >> checkword;
+  } while (!isValidWord(checkword));
 
+  std::string verdict;
+  do {
+    std::cout << "Please enter the verdict: ";
+    std::cin >> verdict;
+  } while (!isValidVerdict(verdict));
+  
   if (verdict == "22222") {
-    cout << "Congratulations you cracked the puzzle!";
+    std::cout << "Congratulations you cracked the puzzle!";
     return false;
   }
 
-  vector<wordset> filteredwords;
+  std::vector<wordset> filteredwords;
   for (wordset &w : words) {
     if (w.isValid(checkword, verdict)) {
       filteredwords.push_back(w);
@@ -115,11 +73,12 @@ bool capture_response() {
 }
 
 int main() {
-  read_from_file(FILENAME);
-  
+  std::vector<wordset> words;
+  read_from_file(words);
+
   do {
-    suggest_words();
-  } while (capture_response());
+    suggest_words(words);
+  } while (capture_response(words));
   
   return 0;
 }
