@@ -39,7 +39,6 @@ $ make run
 g++ -O3 -std=c++11 main.cc -o main.out
 ./main.out
 Total number of 5-letter words = 5757
-Steps taken to solve:
 1 steps taken by 1 words.
 2 steps taken by 26 words.
 3 steps taken by 982 words.
@@ -48,7 +47,7 @@ Steps taken to solve:
 6 steps taken by 361 words.
 7 steps taken by 56 words.
 8 steps taken by 6 words.
-
+Average steps taken to solve is 4.247
 
 Please enter one of the following words: arose
 Please enter the word: arose

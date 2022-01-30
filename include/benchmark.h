@@ -25,12 +25,13 @@ void benchmark::run()
         stepsTaken[solve(w)]++;
     }
     std::cout << "Total number of " << WORDLENGTH << "-letter words = " << words.size() << "\n";
-    std::cout << "Steps taken to solve:\n";
+    int totalSteps = 0;
     for (std::pair<int,int> steps_count : stepsTaken)
     {
         std::cout << steps_count.first << " steps taken by " << steps_count.second << " words.\n";
+        totalSteps += steps_count.first * steps_count.second;
     }
-    std::cout << '\n';
+    std::cout << "Average steps taken to solve is " << ((double)totalSteps / words.size()) << "\n";
 }
 
 int benchmark::solve(wordset &word)
