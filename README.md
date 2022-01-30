@@ -29,3 +29,41 @@ make run
 For example, if you entered `"arose"` and all letters turned black except `o` which was yellow, your verdict is `"00100"`.
 
 5. Repeat step 4 until you solve the puzzle.
+
+## sample run
+
+For wordle #226, this is how the program runs:
+
+```shell
+$ make run
+g++ -O3 -std=c++11 main.cc -o main.out
+./main.out
+Total number of 5-letter words = 5757
+Steps taken to solve:
+1 steps taken by 1 words.
+2 steps taken by 26 words.
+3 steps taken by 982 words.
+4 steps taken by 2780 words.
+5 steps taken by 1545 words.
+6 steps taken by 361 words.
+7 steps taken by 56 words.
+8 steps taken by 6 words.
+
+
+Please enter one of the following words: arose
+Please enter the word: arose
+Please enter the verdict: 00000
+
+Please enter one of the following words: unity
+Please enter the word: unity
+Please enter the verdict: 00110
+
+Please enter one of the following words: gulch
+Please enter the word: gulch
+Please enter the verdict: 10101
+
+Please enter one of the following words: light
+Please enter the word: light
+Please enter the verdict: 22222
+Congratulations you solved the puzzle!
+```
