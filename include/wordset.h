@@ -20,6 +20,10 @@ public:
         }
         return variety > attrib.variety;
     }
+    bool operator==(attributes const &attrib) const
+    {
+        return (valid == attrib.valid and variety == attrib.variety and weight == attrib.weight);
+    }
 };
 
 class wordset
@@ -31,10 +35,12 @@ class wordset
 
     public:
         wordset(std::string word);
+        void reset();
         void setWeight(std::vector<int> &charweights);
         std::string getData() const;
         attributes getAttributes() const;
         void validate(std::string &checkword, std::string &verdict);
+        bool exists(char c);
         bool operator<(wordset const &word) const;
 };
 
@@ -57,6 +63,13 @@ wordset::wordset(std::string word)
         variety += (c > 0);
     }
     attrib.variety = variety;
+}
+
+/* reset the wordset */
+void wordset::reset()
+{
+    attrib.valid = true;
+    attrib.weight = 0;
 }
 
 /* based on charweights array, set the weight of word */
@@ -102,6 +115,12 @@ void wordset::validate(std::string &checkword, std::string &verdict)
             attrib.valid = false;
         }
     }
+}
+
+/* if given character exists in the wordset */
+bool wordset::exists(char c)
+{
+    return (islower(c) and count[c - 'a']);
 }
 
 /* operator for sorting and fetching top guesses */
