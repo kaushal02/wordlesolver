@@ -12,6 +12,10 @@ public:
     {
         if (variety == attrib.variety)
         {
+            if (weight == attrib.weight)
+            {
+                return valid > attrib.valid;
+            }
             return weight > attrib.weight;
         }
         return variety > attrib.variety;

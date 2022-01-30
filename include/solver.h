@@ -47,6 +47,19 @@ void solver::suggest_words()
         exit(0);
     }
 
+    if (totalValidWords == 1)
+    {
+        std::cout << "Congratulations, you solved the puzzle. Correct answer is: ";
+        for (wordset &w : words)
+        {
+            if (w.getAttributes().valid)
+            {
+                std::cout << w.getData() << '\n';
+                exit(0);
+            }
+        }
+    }
+
     std::vector<int> count(26, 0);
     for (wordset &w : words)
     {
@@ -104,7 +117,7 @@ bool solver::capture_response()
 
     if (verdict == "22222")
     {
-        std::cout << "Congratulations you cracked the puzzle!";
+        std::cout << "Congratulations you solved the puzzle!\n";
         return false;
     }
 
