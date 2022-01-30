@@ -1,6 +1,6 @@
-run:
-	g++ -O3 -std=c++11 solver.cc -o solver.out
-	./solver.out
+run: main.cc
+	g++ -O3 -std=c++11 main.cc -o main.out
+	./main.out
 
 clean:
-	rm -f solver.out
+	rm -f main.out
