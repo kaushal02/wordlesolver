@@ -15,10 +15,14 @@ class solver
 
     public:
         solver(std::string filename = FILENAME);
-        void suggest_words();
-        bool capture_response();
+        void reset();
+        std::vector<std::string> suggest();
+        std::vector<wordset> getWords();
+        bool read();
+        void validate(std::string checkword, std::string verdict);
 };
 
+/* initializer */
 solver::solver(std::string filename)
 {
     std::ifstream fin(filename);
@@ -36,26 +40,36 @@ solver::solver(std::string filename)
 
     totalValidWords = words.size();
     matches = std::vector<int>(26, 0);
-    std::cout << "Loaded " << totalValidWords << " valid " << WORDLENGTH << "-letter words.\n";
 }
 
-void solver::suggest_words()
+/* reset the solver */
+void solver::reset()
 {
+    for (wordset &w : words)
+    {
+        w.reset();
+    }
+    totalValidWords = words.size();
+    matches = std::vector<int>(26, 0);
+}
+
+/* list of best guesses */
+std::vector<std::string> solver::suggest()
+{
+    std::vector<std::string> ret;
     if (!totalValidWords)
     {
-        std::cout << "No words remaining. Please check the inputs. Terminating.\n";
-        exit(0);
+        return ret;
     }
 
     if (totalValidWords == 1)
     {
-        std::cout << "Congratulations, you solved the puzzle. Correct answer is: ";
         for (wordset &w : words)
         {
             if (w.getAttributes().valid)
             {
-                std::cout << w.getData() << '\n';
-                exit(0);
+                ret.push_back(w.getData());
+                return ret;
             }
         }
     }
@@ -77,31 +91,36 @@ void solver::suggest_words()
     }
     std::sort(words.begin(), words.end());
 
-    std::cout << "Suggested guesses:\n";
-    std::cout << "word  | weight  | valid\n";
-    std::cout << "------+---------+------\n";
-    for (int i = 0; i < SUGGESTCOUNT; i++)
+    int weight = words[0].getAttributes().weight;
+    if (!weight)
     {
-        std::cout << words[i].getData() << " | " << words[i].getAttributes().weight << "\t| " << std::boolalpha << words[i].getAttributes().valid << '\n';
+        for (wordset &w : words)
+        {
+            if (w.getAttributes().valid)
+            {
+                ret.push_back(w.getData());
+            }
+        }
     }
-    std::cout << "Few valid words (out of " << totalValidWords << "):\n";
-    int i = 0, toPrint = std::min(REMAININGCOUNT, totalValidWords);
-    while (toPrint--)
+    else
     {
-        while (i < words.size() and !words[i].getAttributes().valid)
+        int i = 0;
+        while (i < words.size() and words[i].getAttributes() == words[0].getAttributes())
         {
-            i++;
+            ret.push_back(words[i++].getData());
         }
-        if (i >= words.size())
-        {
-            break;
-        }
-        std::cout << words[i++].getData() << ' ';
     }
-    std::cout << '\n';
+    return ret;
 }
 
-bool solver::capture_response()
+/* words getter */
+std::vector<wordset> solver::getWords()
+{
+    return words;
+}
+
+/* read and validate the response */
+bool solver::read()
 {
     std::string checkword;
     do {
@@ -120,7 +139,13 @@ bool solver::capture_response()
         std::cout << "Congratulations you solved the puzzle!\n";
         return false;
     }
+    validate(checkword, verdict);
+    return true;
+}
 
+/* validate the remaining words as per response */
+void solver::validate(std::string checkword, std::string verdict)
+{
     for (int i = 0; i < WORDLENGTH; i++)
     {
         if (verdict[i] == '1' or verdict[i] == '2')
@@ -134,5 +159,4 @@ bool solver::capture_response()
         w.validate(checkword, verdict);
         totalValidWords += w.getAttributes().valid;
     }
-    return true;
 }
