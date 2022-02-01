@@ -39,13 +39,12 @@ class wordset
         void setWeight(std::vector<int> &charweights);
         std::string getData() const;
         attributes getAttributes() const;
-        void validate(std::string &checkword, std::string &verdict);
-        bool exists(char c);
+        std::string getVerdict(std::string word);
+        bool validate(std::string &checkword, std::string &verdict);
         bool operator<(wordset const &word) const;
 };
 
-
-/* Initializer for wordset */
+/* initializer */
 wordset::wordset(std::string word)
 {
     assert(word.size() == WORDLENGTH);
@@ -95,8 +94,30 @@ attributes wordset::getAttributes() const
     return attrib;
 }
 
+/* find the verdict if entered the given word */
+std::string wordset::getVerdict(std::string word)
+{
+    std::string verdict = "";
+    for (int i = 0; i < WORDLENGTH; i++)
+    {
+        if (word[i] == data[i])
+        {
+            verdict += "2";
+        }
+        else if (count[word[i] - 'a'])
+        {
+            verdict += "1";
+        }
+        else
+        {
+            verdict += "0";
+        }
+    }
+    return verdict;
+}
+
 /* check if the word should be considered further for the puzzle */
-void wordset::validate(std::string &checkword, std::string &verdict)
+bool wordset::validate(std::string &checkword, std::string &verdict)
 {
     for (int i = 0; i < WORDLENGTH; i++)
     {
@@ -115,12 +136,7 @@ void wordset::validate(std::string &checkword, std::string &verdict)
             attrib.valid = false;
         }
     }
-}
-
-/* if given character exists in the wordset */
-bool wordset::exists(char c)
-{
-    return (islower(c) and count[c - 'a']);
+    return attrib.valid;
 }
 
 /* operator for sorting and fetching top guesses */
