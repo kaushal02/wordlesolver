@@ -47,7 +47,7 @@ Total number of 5-letter words = 5757
 6 steps taken by 361 words.
 7 steps taken by 56 words.
 8 steps taken by 6 words.
-Average steps taken to solve is 4.247
+Solved 5757/5757 words in average 4.247 steps.
 
 Please enter one of the following words: arose
 Please enter the word: arose

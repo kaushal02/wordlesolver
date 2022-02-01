@@ -7,7 +7,7 @@
 class benchmark : public solver
 {
     private:
-        std::string getVerdict(std::string word, wordset trueword);
+        const int MAX_STEPS = 10;
 
     public:
         benchmark() {}
@@ -25,13 +25,21 @@ void benchmark::run()
         stepsTaken[solve(w)]++;
     }
     std::cout << "Total number of " << WORDLENGTH << "-letter words = " << words.size() << "\n";
-    int totalSteps = 0;
+    int totalSteps = 0, totalSolvedWords = 0;
     for (std::pair<int,int> steps_count : stepsTaken)
     {
-        std::cout << steps_count.first << " steps taken by " << steps_count.second << " words.\n";
-        totalSteps += steps_count.first * steps_count.second;
+        if (steps_count.first == -1)
+        {
+            std::cout << "More than " << MAX_STEPS << " steps taken by " << steps_count.second << " words.\n";
+        }
+        else
+        {
+            std::cout << steps_count.first << " steps taken by " << steps_count.second << " words.\n";
+            totalSteps += steps_count.first * steps_count.second;
+            totalSolvedWords += steps_count.second;
+        }
     }
-    std::cout << "Average steps taken to solve is " << ((double)totalSteps / words.size()) << "\n";
+    std::cout << "Solved " << totalSolvedWords << "/" << words.size() << " words in average " << ((double)totalSteps / totalSolvedWords) << " steps.\n";
 }
 
 int benchmark::solve(wordset &word)
@@ -42,34 +50,14 @@ int benchmark::solve(wordset &word)
     while (verdict != "22222")
     {
         std::vector<std::string> guesses = suggest();
-        if (guesses.empty() or ans > 15)
+        if (guesses.empty() or ans > MAX_STEPS)
         {
             return -1;
         }
-        verdict = getVerdict(guesses[0], word);
+        verdict = word.getVerdict(guesses[0]);
         validate(guesses[0], verdict);
         ans++;
     }
     return ans;
 }
 
-std::string benchmark::getVerdict(std::string word, wordset trueword)
-{
-    std::string verdict = "";
-    for (int i = 0; i < WORDLENGTH; i++)
-    {
-        if (word[i] == trueword.getData()[i])
-        {
-            verdict += "2";
-        }
-        else if (trueword.exists(word[i]))
-        {
-            verdict += "1";
-        }
-        else
-        {
-            verdict += "0";
-        }
-    }
-    return verdict;
-}

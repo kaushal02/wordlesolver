@@ -156,7 +156,6 @@ void solver::validate(std::string checkword, std::string verdict)
     totalValidWords = 0;
     for (wordset &w : words)
     {
-        w.validate(checkword, verdict);
-        totalValidWords += w.getAttributes().valid;
+        totalValidWords += w.validate(checkword, verdict);
     }
 }
