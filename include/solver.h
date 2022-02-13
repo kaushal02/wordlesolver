@@ -62,7 +62,7 @@ std::vector<std::string> solver::suggest()
         return ret;
     }
 
-    if (totalValidWords == 1)
+    if (totalValidWords < 3)
     {
         for (wordset &w : words)
         {
