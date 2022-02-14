@@ -1,9 +1,13 @@
 #include "include/solver.h"
 #include "include/benchmark.h"
 
-int main()
+int main(int argc, char **argv)
 {
-    benchmark().run();
+    if (argc == 2 and strcmp(argv[1], "benchmark") == 0)
+    {
+        benchmark().run();
+        return 0;
+    }
 
     solver s;
     do {
