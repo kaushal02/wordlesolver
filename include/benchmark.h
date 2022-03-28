@@ -39,7 +39,26 @@ void benchmark::run()
             totalSolvedWords += steps_count.second;
         }
     }
-    std::cout << "Solved " << totalSolvedWords << "/" << words.size() << " words in average " << ((double)totalSteps / totalSolvedWords) << " steps.\n";
+    std::cout << "Solved " << totalSolvedWords << "/" << words.size() << " words in average " << ((double)totalSteps / totalSolvedWords) << " steps.\n\n";
+
+    const int STEPS_100 = words.size() / 250;
+
+    for (std::pair<int,int> steps_count : stepsTaken)
+    {
+        if (steps_count.first == -1)
+        {
+            std::cout << "- ";
+        }
+        else
+        {
+            std::cout << steps_count.first << " ";
+        }
+        for (int i = 0; i <steps_count.second / STEPS_100; i++)
+        {
+            std::cout << "|";
+        }
+        std::cout << "\n";
+    }
 }
 
 int benchmark::solve(wordset &word)
